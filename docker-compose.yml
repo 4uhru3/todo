@@ -1,0 +1,88 @@
+version: "3.3"
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: todo_app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVCIE_NAME: "$APP_NAME"
+      SERVICE_TAGS: "$APP_ENV"
+      APP_ENV: "$APP_ENV"
+      APP_SECRET: "$APP_SECRET"
+      DATABASE_URL: "mysql://$MYSQL_USER:$MYSQL_PASSWORD@mysql:3306/$MYSQL_DATABASE"
+    working_dir: /var/www
+    volumes:
+      - ./app:/var/www:rw
+      - ./config/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Nginx service
+  webserver:
+    image: nginx:alpine
+    container_name: todo_webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - ${EXT_HTTP_PORT}:80
+      - ${EXT_HTTPS_PORT}:443
+    volumes:
+      - ./app:/var/www
+      - ./config/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  #MySQL database
+  db:
+    image: mysql:latest
+    container_name: todo_db
+    restart: always
+    tty: true
+    ports:
+      - ${EXT_DB_PORT}:3306
+    environment:
+      MYSQL_DATABASE: "$MYSQL_DATABASE"
+      MYSQL_ROOT_PASSWORD: "$MYSQL_ROOT_PASSWORD"
+      SERVICE_TAGS: "$APP_ENV"
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./config/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+  #Node js with yarn
+  node:
+    image: library/node:current-alpine3.10
+    container_name: todo_node
+    tty: true
+    restart: unless-stopped
+    ports:
+      - 5000:5000
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.7
+    container_name: todo_pma
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: "$MYSQL_USER"
+      PMA_PASSWORD: "$MYSQL_PASSWORD"
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
