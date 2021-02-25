@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.7"
 services:
 
   #PHP Service
@@ -60,6 +60,8 @@ services:
   node:
     image: library/node:current-alpine3.10
     container_name: todo_node
+    volumes:
+      - ./app:/var/www
     tty: true
     restart: unless-stopped
     ports:
