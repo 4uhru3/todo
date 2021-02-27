@@ -65,20 +65,7 @@ services:
     tty: true
     restart: unless-stopped
     ports:
-      - 5000:5000
-    networks:
-      - app-network
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:4.7
-    container_name: todo_pma
-    ports:
-      - 3050:80
-    environment:
-      PMA_HOST: db
-      PMA_PORT: ${EXT_DB_PORT}
-      PMA_USER: "$MYSQL_USER"
-      PMA_PASSWORD: "$MYSQL_PASSWORD"
+      - 3001:3000
     networks:
       - app-network
 
