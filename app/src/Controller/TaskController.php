@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @Rest\Route("/api")
+ * @Rest\Route("/api/task")
  */
 final class TaskController extends AbstractController
 {
@@ -57,7 +57,7 @@ final class TaskController extends AbstractController
 	/**
 	 * @param Request $request
 	 * @return JsonResponse
-	 * @Rest\Post("/task/create", name="create_task")
+	 * @Rest\Post("/create", name="create_task")
 	 */
 	public function createAction(Request $request): JsonResponse
 	{
@@ -77,7 +77,7 @@ final class TaskController extends AbstractController
 	/**
 	 * @param Request $request
 	 * @return JsonResponse
-	 * @Rest\Post("/task/update/{id}", name="update_task")
+	 * @Rest\Post("/update/{id}", name="update_task")
 	 */
 	public function updateAction(Request $request): JsonResponse
 	{
@@ -97,7 +97,7 @@ final class TaskController extends AbstractController
 	}
 
 	/**
-	 * @Rest\Get("/task/list", name="find_all_tasks")
+	 * @Rest\Get("/list", name="find_all_tasks")
 	 * @param $request
 	 * @return JsonResponse
 	 */
@@ -117,7 +117,7 @@ final class TaskController extends AbstractController
 	/**
 	 * @param Request $request
 	 * @return JsonResponse
-	 * @Rest\Post("/task/complete/{id}", name="complete_task")
+	 * @Rest\Post("/complete/{id}", name="complete_task")
 	 */
 	public function completeAction(Request $request): JsonResponse
 	{
@@ -142,7 +142,7 @@ final class TaskController extends AbstractController
 	/**
 	 * @param Request $request
 	 * @return JsonResponse
-	 * @Rest\Post("/task/delete/{id}", name="delete_task")
+	 * @Rest\Post("/delete/{id}", name="delete_task")
 	 */
 	public function deleteAction(Request $request): Response
 	{
