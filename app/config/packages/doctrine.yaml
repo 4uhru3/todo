@@ -1,5 +1,6 @@
 doctrine:
     dbal:
+        schema_filter: ~^(?!sessions)~
         url: '%env(resolve:DATABASE_URL)%'
         types:
             uuid: Ramsey\Uuid\Doctrine\UuidType
