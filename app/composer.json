@@ -12,6 +12,7 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.1.0",
         "doctrine/orm": "^2.8",
+        "doctrine/sql-formatter": "^1.1",
         "friendsofsymfony/rest-bundle": "^3.0",
         "phpdocumentor/reflection-docblock": "^5.2",
         "ramsey/uuid-doctrine": "^1.6",
