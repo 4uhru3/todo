@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210227235142 extends AbstractMigration
+final class Version20210228022333 extends AbstractMigration
 {
 	/**
 	 * @return string
@@ -25,14 +25,14 @@ final class Version20210227235142 extends AbstractMigration
 	 */
 	public function up(Schema $schema): void
 	{
-		$this->addSql('
-			CREATE TABLE `sessions` (
-    			`sess_id` VARCHAR(128) NOT NULL PRIMARY KEY,
-    			`sess_data` BLOB NOT NULL,
-    			`sess_time` INTEGER UNSIGNED NOT NULL,
-    			`sess_lifetime` MEDIUMINT NOT NULL
-			) COLLATE utf8_bin, ENGINE = InnoDB;'
-		);
+		$this->addSql("CREATE TABLE `sessions` (
+    		`sess_id` VARBINARY(128) NOT NULL PRIMARY KEY,
+    		`sess_data` BLOB NOT NULL,
+    		`sess_lifetime` INTEGER UNSIGNED NOT NULL,
+    		`sess_time` INTEGER UNSIGNED NOT NULL
+		) COLLATE utf8mb4_bin, ENGINE = InnoDB;
+	");
+
 	}
 
 	/**
@@ -40,8 +40,7 @@ final class Version20210227235142 extends AbstractMigration
 	 */
 	public function down(Schema $schema): void
 	{
-		$this->addSql('
-			DROP TABLE `sessions`;
-		');
+		$this->addSql("DROP TABLE `sessions`");
 	}
+
 }
