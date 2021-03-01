@@ -31,6 +31,13 @@ class Task
 	 */
 	private $user;
 
+
+    /**
+     * @ORM\Column(name="user_id", type="uuid", unique=false)
+     * @var UuidInterface
+     */
+    private $user_id;
+
 	/**
 	 * @ORM\Column(name="title", type="string", nullable=true)
 	 * @var string
@@ -123,5 +130,21 @@ class Task
 	{
 		$this->completed = $completed;
 	}
+
+    /**
+     * @return UuidInterface|null
+     */
+    public function getUserId(): ?UuidInterface
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * @param UuidInterface $user_id
+     */
+    public function setUserId(UuidInterface $user_id): void
+    {
+        $this->user_id = $user_id;
+    }
 
 }
