@@ -20,7 +20,7 @@
         <div class="col text-right">
           <b-button-group size="sm">
             <b-button
-              v-if="!task.completed"
+              v-if="!task.completed && !isEditing"
               variant="outline-success"
               @click="completeTask(task.id)"
             >
