@@ -10,6 +10,7 @@ use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Ramsey\Uuid\Uuid;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +23,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Rest\Route("/api/task")
+ * @IsGranted("IS_AUTHENTICATED_FULLY")
  */
 final class TaskController extends AbstractController
 {
@@ -63,8 +65,11 @@ final class TaskController extends AbstractController
 	{
 		$success = false;
 		$data = [];
+		$user = $this->getUser();
+		$task = new Task();
+		$task->setUser($user);
 
-		$form = $this->createForm(TaskType::class, new Task());
+		$form = $this->createForm(TaskType::class, $task);
 
 		if ($this->processTaskForm($form, $request)) {
 			$success = true;
@@ -109,7 +114,7 @@ final class TaskController extends AbstractController
 			$completed = (int)$completed;
 		}
 
-		$tasks = $this->taskRepository->getListByCompleted($completed);
+		$tasks = $this->taskRepository->getListByUserByCompleted($this->getUser(),$completed);
 
 		return $this->apiResponseFormat(true, $tasks);
 	}
@@ -136,7 +141,7 @@ final class TaskController extends AbstractController
 			$success = false;
 		}
 
-		return $this->apiResponseFormat($success);
+		return $this->apiResponseFormat($success, $task);
 	}
 
 	/**
@@ -160,21 +165,20 @@ final class TaskController extends AbstractController
 			$success = false;
 		}
 
-		return $this->apiResponseFormat($success);
+		return $this->apiResponseFormat($success, $task);
 	}
 
-	/**
-	 * @param string $id
-	 * @return Task
-	 */
-	private function fetchTask(string $id): Task
+    /**
+     * @param string $id
+     * @return Task
+     */
+	private function fetchTask(string $id): Object
 	{
 		if (!$this->validateUuid($id)) {
 			throw new BadRequestHttpException('Not valid uuid');
 		}
 
-		/** @var Task $task */
-		$task = $this->taskRepository->find($id);
+		$task = $this->taskRepository->finByUser($id, $this->getUser());
 
 		if (empty($task)) {
 			throw new NotFoundHttpException("Task with uuid: $id not found");
@@ -190,7 +194,7 @@ final class TaskController extends AbstractController
 	 */
 	private function processTaskForm(FormInterface $form, Request $request): bool
 	{
-		$params = $request->request->all();
+		$params = json_decode($request->getContent(), true);
 
 		if (empty($params)) {
 			throw new BadRequestHttpException('Request params is empty');
