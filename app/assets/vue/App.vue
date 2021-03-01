@@ -1,46 +1,52 @@
 <template>
-  <div className="container">
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <router-link
-        class-name="navbar-brand"
-        to="/home"
+  <div className="container-flex">
+    <b-navbar
+      v-if="isAuthenticated"
+      toggleable="lg"
+      type="dark"
+      variant="info"
+    >
+      <b-navbar-toggle
+        target="nav-collapse"
+      />
+      <b-collapse
+        id="nav-collapse"
+        is-nav
       >
-        App
-      </router-link>
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon" />
-      </button>
-      <div
-        id="navbarNav"
-        className="collapse navbar-collapse"
-      >
-        <ul className="navbar-nav">
-          <router-link
-            class-name="nav-item"
-            tag="li"
-            to="/home"
-            active-class="active"
+        <b-navbar-nav />
+        <!-- Right aligned nav items -->
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item
+            href="/api/security/logout"
           >
-            <a className="nav-link">Home</a>
-          </router-link>
-        </ul>
-      </div>
-    </nav>
-
+            Logout
+          </b-nav-item>
+        </b-navbar-nav>
+      </b-collapse>
+    </b-navbar>
     <router-view />
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "App",
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters['security/isAuthenticated']
+    },
+  },
+  created() {
+    axios.interceptors.response.use(undefined, (err) => {
+      return new Promise(() => {
+        if (err.response.status === 401) {
+          this.$router.push({path: "/login"})
+        }
+        throw err;
+      });
+    });
+  },
 }
 </script>
